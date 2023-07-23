@@ -147,7 +147,7 @@ with gr.Blocks(css='style.css') as demo:
             'Hallo, wie geht es dir?',
             'Was ist die Hauptstadt von Nordrhein-Westfalen?',
             'Erkläre mir die parlamentarische Demokratie in einfacher Sprache!',
-            'Was ist der Sinn des Lebens?',
+            'Ich möchte mit einem Wohnmobil nach Norwegen in den Urlaub fahren. Erstelle mir einen groben Reiseplan für 2 Wochen!',
             "Nenne 5 Gründe, warum lokale open-source KI-Modelle wichtig sind.",
         ],
         inputs=textbox,
