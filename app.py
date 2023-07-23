@@ -6,18 +6,20 @@ import torch
 from model import get_input_token_length, run
 
 DEFAULT_SYSTEM_PROMPT = """\
-You are a helpful, respectful and honest assistant. Always answer as helpfully as possible.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content.\n\nIf a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information. Please answer in the same language as the user!\
-"""
+Du bist ein hilfreicher, respektvoller und ehrlicher Assistent. Antworte immer so hilfreich wie möglich. Deine Antworten sollten keinen schädlichen, unethischen, rassistischen, sexistischen, toxischen, gefährlichen oder illegalen Inhalt enthalten.
+
+Wenn eine Frage keinen Sinn ergibt oder faktisch nicht kohärent ist, erkläre warum, anstatt etwas Unkorrektes zu antworten. Wenn du die Antwort auf eine Frage nicht weißt, teile bitte keine falschen Informationen."""
 MAX_MAX_NEW_TOKENS = 2048
-DEFAULT_MAX_NEW_TOKENS = 1024
+DEFAULT_MAX_NEW_TOKENS = 512
 MAX_INPUT_TOKEN_LENGTH = 4000
 
 DESCRIPTION = """
-# Llama-2 13B Chat
-This Space demonstrates model [Llama-2-13b-chat](https://huggingface.co/meta-llama/Llama-2-13b-chat) by Meta, a Llama 2 model with 13B parameters fine-tuned for chat instructions. Feel free to play with it, or duplicate to run generations without a queue! If you want to run your own service, you can also [deploy the model on Inference Endpoints](https://huggingface.co/inference-endpoints).
-🔎 For more details about the Llama 2 family of models and how to use them with `transformers`, take a look [at our blog post](https://huggingface.co/blog/llama2).
-🔨 Looking for an even more powerful model? Check out the large [**70B** model demo](https://huggingface.co/spaces/ysharma/Explore_llamav2_with_TGI).
-🐇 For a smaller model that you can run on many GPUs, check our [7B model demo](https://huggingface.co/spaces/huggingface-projects/llama-2-7b-chat).
+# Llama-2 13B Chat German
+Dieser Space ist eine Demo für das [Llama-2-13b-chat-german](https://huggingface.co/jphme/Llama-2-13b-chat-german) Modell, welches auf Meta´s Llama2 basiert und zusätzlich mit einem Datensatz auf deutsche Konversationen und "Retrieval" fein-abgestimmt wurde.
+
+Während das "normale" Llama2 Chat Modell große Schwierigkeiten hat, auf Deutsch zu antworten, sollte dieses Modell deutlich bessere Antworten liefer. Für einen Vergleich finden Sie [hier](https://huggingface.co/spaces/huggingface-projects/llama-2-13b-chat) eine Demo des "normalen" Llama2 Chat Modells.
+
+Bitte beachten Sie, dass aufgrund der Größe und "Quantisierung" des Modells die sprachliche Qualität der Antworten bei längeren Texten noch deutlich hinter größeren Modellen bzw. ChatGPT&co liegt. Sollte es Interesse geben, werde ich weitere Versionen mit größeren Modellen und basierend auf besseren Llama2-Modellen veröffentlichen.
 """
 
 LICENSE = """
@@ -83,35 +85,31 @@ def process_example(message: str) -> tuple[str, list[tuple[str, str]]]:
 def check_input_token_length(message: str, chat_history: list[tuple[str, str]], system_prompt: str) -> None:
     input_token_length = get_input_token_length(message, chat_history, system_prompt)
     if input_token_length > MAX_INPUT_TOKEN_LENGTH:
-        raise gr.Error(f'The accumulated input is too long ({input_token_length} > {MAX_INPUT_TOKEN_LENGTH}). Clear your chat history and try again.')
+        raise gr.Error(f'Der gesamte Input-Text ist zu lang ({input_token_length} > {MAX_INPUT_TOKEN_LENGTH}). Bitte löschen Sie die Chat-Historie und versuchen es dann erneut.')
 
 
 with gr.Blocks(css='style.css') as demo:
-    gr.Markdown(DESCRIPTION)
-    gr.DuplicateButton(value='Duplicate Space for private use',
-                       elem_id='duplicate-button')
-
     with gr.Group():
         chatbot = gr.Chatbot(label='Chatbot')
         with gr.Row():
             textbox = gr.Textbox(
                 container=False,
                 show_label=False,
-                placeholder='Type a message...',
+                placeholder='Geben Sie eine Nachricht ein...',
                 scale=10,
             )
-            submit_button = gr.Button('Submit',
+            submit_button = gr.Button('Abschicken',
                                       variant='primary',
                                       scale=1,
                                       min_width=0)
     with gr.Row():
         retry_button = gr.Button('🔄  Retry', variant='secondary')
-        undo_button = gr.Button('↩️ Undo', variant='secondary')
-        clear_button = gr.Button('🗑️  Clear', variant='secondary')
+        undo_button = gr.Button('↩️ Rückgängig', variant='secondary')
+        clear_button = gr.Button('🗑️  Löschen', variant='secondary')
 
     saved_input = gr.State()
 
-    with gr.Accordion(label='Advanced options', open=False):
+    with gr.Accordion(label='Erweiterte Einstellungen', open=False):
         system_prompt = gr.Textbox(label='System prompt',
                                    value=DEFAULT_SYSTEM_PROMPT,
                                    lines=6)
@@ -123,11 +121,11 @@ with gr.Blocks(css='style.css') as demo:
             value=DEFAULT_MAX_NEW_TOKENS,
         )
         temperature = gr.Slider(
-            label='Temperature',
+            label='Temperatur',
             minimum=0.1,
             maximum=4.0,
             step=0.1,
-            value=1.0,
+            value=0.6,
         )
         top_p = gr.Slider(
             label='Top-p (nucleus sampling)',
@@ -146,11 +144,11 @@ with gr.Blocks(css='style.css') as demo:
 
     gr.Examples(
         examples=[
-            'Hello there! How are you doing?',
-            'Can you explain briefly to me what is the Python programming language?',
-            'Explain the plot of Cinderella in a sentence.',
-            'How many hours does it take a man to eat a Helicopter?',
-            "Write a 100-word article on 'Benefits of Open-Source in AI research'",
+            'Hallo, wie geht es dir?',
+            'Was ist die Hauptstadt von Nordrhein-Westfalen?',
+            'Erkläre mir die parlamentarische Demokratie in einfacher Sprache!',
+            'Was ist der Sinn des Lebens?',
+            "Nenne 5 Gründe, warum lokale open-source KI-Modelle wichtig sind.",
         ],
         inputs=textbox,
         outputs=[textbox, chatbot],
