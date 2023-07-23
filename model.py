@@ -4,7 +4,7 @@ from typing import Iterator
 import torch
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 
-model_id = 'meta-llama/Llama-2-13b-chat-hf'
+model_id = 'jphme/Llama-2-13b-chat-german'
 
 if torch.cuda.is_available():
     config = AutoConfig.from_pretrained(model_id)
