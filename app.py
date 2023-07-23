@@ -15,7 +15,7 @@ MAX_INPUT_TOKEN_LENGTH = 4000
 
 DESCRIPTION = """
 # Llama-2 13B Chat German
-Dieser Space ist eine Demo für das [Llama-2-13b-chat-german](https://huggingface.co/jphme/Llama-2-13b-chat-german) Modell, welches auf Meta´s Llama2 basiert und zusätzlich mit einem Datensatz auf deutsche Konversationen und "Retrieval" fein-abgestimmt wurde.
+Dieser Space ist eine Demo für das [Llama-2-13b-chat-german](https://huggingface.co/jphme/Llama-2-13b-chat-german) Modell, welches auf Metas Llama2 basiert und zusätzlich mit einem Datensatz auf deutsche Konversationen und "Retrieval" fein-abgestimmt wurde.
 
 Während das "normale" Llama2 Chat Modell große Schwierigkeiten hat, auf Deutsch zu antworten, sollte dieses Modell deutlich bessere Antworten liefer. Für einen Vergleich finden Sie [hier](https://huggingface.co/spaces/huggingface-projects/llama-2-13b-chat) eine Demo des "normalen" Llama2 Chat Modells.
 
@@ -89,6 +89,8 @@ def check_input_token_length(message: str, chat_history: list[tuple[str, str]], 
 
 
 with gr.Blocks(css='style.css') as demo:
+    gr.Markdown(DESCRIPTION)
+
     with gr.Group():
         chatbot = gr.Chatbot(label='Chatbot')
         with gr.Row():
