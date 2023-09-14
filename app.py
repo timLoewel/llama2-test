@@ -272,4 +272,4 @@ with gr.Blocks(css='style.css') as demo:
         api_name=False,
     )
 
-demo.queue(max_size=20).launch()
+demo.queue(max_size=20).launch(server_port = 8080)
