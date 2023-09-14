@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM pytorch/pytorch:latest
 
 WORKDIR /workspace
 ADD . /workspace
